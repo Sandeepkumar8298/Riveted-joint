@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Riveted joint Calculation</title>
+    <style>
+      body {
+          font-family: Arial, sans-serif;
+          background-color: hwb(244 39% 20%);
+          margin: 0;
+          padding: 0;
+          display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  scrollbar-width: thin;
+  scrollbar-color: #333 #f0f0f0;
+  background: linear-gradient(to bottom, #0074d9, #00bfff);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+      }
+      h2 {
+  font-family: 'Helvetica', Arial, sans-serif;
+  font-size: 42px;
+  font-weight: bold;
+  color: #6e2505;
+  text-align: center;
+  text-transform: uppercase;
+  margin-top: 0px;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(47, 3, 3, 0.684);
+  border-bottom: 4px solid #0074d9;
+  padding-bottom: 10px;
+}
+
+/* Hover effect for the h1 tag */
+h2:hover {
+  color: #065d3a62;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+      h1 {
+  font-family: 'Helvetica', Arial, sans-serif;
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  text-transform: uppercase;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  border-bottom: 4px solid #0074d9;
+  padding-bottom: 10px;
+}
+
+/* Hover effect for the h1 tag */
+h1:hover {
+  color: #ff5733;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+#output {
+  background-color: #f2f2f2;
+  border: 5px solid #090202;
+  border-radius: 30px;
+  font-size: 20px;
+  padding: 20px;
+  margin: 0 auto;
+  width: 80%;
+  text-align: center;
+  box-shadow: 2px 2px 6px rgba(142, 26, 26, 0.282);
+}
+
+/* Responsive design for the output box */
+@media (max-width: 768px) {
+  #output {
+    width: 90%;
+    padding: 10px;
+  }
+}
+p {
+  text-align:center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #FF007F;
+  padding-top:15px ;
+
+  
+}
+
+
+      label {
+          display: block;
+          font-weight: bold;
+          color: #555;
+          margin-top: 10px;
+      }
+
+      input[type="text"] {
+          width: 100%;
+          padding: 10px;
+          margin: 5px 0;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+      }
+
+      button {
+          background-color: #3498db;
+          color: #fff;
+          border: none;
+          padding: 12px 20px;
+          cursor: pointer;
+          border-radius: 4px;
+          margin-top: 20px;
+      }
+
+      button:hover {
+          background-color: #2980b9;
+      }
+
+      .result-label {
+          font-weight: bold;
+          color: #3498db;
+      }
+
+      .result-value {
+          font-weight: bold;
+          color: #333;
+      }
+
+      /* Responsive design */
+      @media (max-width: 768px) {
+          h1 ,h2 {
+              padding: 15px 0;
+          }
+
+          #output {
+              padding: 15px;
+              margin: 15px;
+          }
+
+          button {
+              margin-top: 15px;
+          }
+      }
+  </style>
+</head>
+<body>
+  <h2>Machine Design project @NITH</h2>
+    <h1>Result of riveted joint Calculation</h1>
+      
+    </div>
+    <div id="output"></div>
+
+    <script>
+        function calculateRiveting() {
+            var layout = prompt("Layout of riveting (chain or zig-zag):");
+
+            if (layout === "chain") {
+                var type = prompt("Types of joint (lap or butt):");
+
+                if (type === "butt") {
+                    var cover = prompt("types of cover plate(single or double or unequal width):");
+                    var t, d, n, tau, sigmac, sigmat, pitch, pt, ps, pc, ita;
+                    var output = "";
+
+                    if (cover === "single") {
+                        t = parseFloat(prompt("Enter the value of plate thickness (in mm):"));
+                        n = parseFloat(prompt("types of riveted(single,double,triple,other) :"));
+                        tau = parseFloat(prompt("Enter the allowable shear stress (in MPa):"));
+                        sigmac = parseFloat(prompt("Enter the allowable crushing stress (in MPa):"));
+                        sigmat = parseFloat(prompt("Enter the allowable tensile stress (in MPa):"));
+
+                        var singleCoverPlateThickness = 1.125 * t;
+
+                        if (t >= 8) {
+                            d = 6 * Math.sqrt(t);
+                        } else {
+                            d = (4 * t * sigmac) / (1.875 * Math.PI * tau);
+                        }
+
+                        pitch = Math.min((1.875 * Math.PI * d * d * tau) / 4, sigmac * d * t) * n / (sigmat * t) + d;
+                        var margin = 1.5 * d;
+                        var transversePitch = 2.5 * d;
+
+                        pt = (pitch - d) * t * sigmat;
+                        ps = (n * 1.875 * Math.PI * d * d * tau) / 4;
+                        pc = n * d * t * sigmac;
+                        ita = Math.min(pt, Math.min(ps, pc)) / (pitch * t * sigmat);
+
+                        output = "Thickness of single cover plate: " + singleCoverPlateThickness + " mm\n";
+                    }
+                    else if (cover === "double") {
+                        t = parseFloat(prompt("Enter the value of plate thickness (in mm):"));
+                        n = parseFloat(prompt("types of riveted(single,double,triple,other) :"));
+                        tau = parseFloat(prompt("Enter the allowable shear stress (in MPa):"));
+                        sigmac = parseFloat(prompt("Enter the allowable crushing stress (in MPa):"));
+                        sigmat = parseFloat(prompt("Enter the allowable tensile stress (in MPa):"));
+
+                        var doubleCoverPlateThickness = 0.625 * t;
+
+                        if (t >= 8) {
+                            d = 6 * Math.sqrt(t);
+                        } else {
+                            d = (4 * t * sigmac) / (1.875 * Math.PI * tau);
+                        }
+
+                        pitch = Math.min((1.875 * Math.PI * d * d * tau) / 4, sigmac * d * t) * n / (sigmat * t) + d;
+                        var margin = 1.5 * d;
+                        var transversePitch = 2.5 * d;
+
+                        pt = (pitch - d) * t * sigmat;
+                        ps = (n * 1.875 * Math.PI * d * d * tau) / 4;
+                        pc = n * d * t * sigmac;
+                        ita = Math.min(pt, Math.min(ps, pc)) / (pitch * t * sigmat);
+
+                        output = "Thickness of double cover plate: " + doubleCoverPlateThickness + " mm\n";
+                    }
+                    // Handle other cases...
+                    else {
+                      t = parseFloat(prompt("Enter the value of plate thickness (in mm):"));
+                        n = parseFloat(prompt("types of riveted(single,double,triple,other) :"));
+                        tau = parseFloat(prompt("Enter the allowable shear stress (in MPa):"));
+                        sigmac = parseFloat(prompt("Enter the allowable crushing stress (in MPa):"));
+                        sigmat = parseFloat(prompt("Enter the allowable tensile stress (in MPa):"));
+
+                        var thicknessofwidercoverplate = (0.75 * t);
+                        var thicknessofnarrowercoverplate = (0.625 * t);
+
+
+                        if (t >= 8) {
+                            d = 6 * Math.sqrt(t);
+                        } else {
+                            d = (4 * t * sigmac) / (1.875 * Math.PI * tau);
+                        }
+
+                        pitch = Math.min((1.875 * Math.PI * d * d * tau) / 4, sigmac * d * t) * n / (sigmat * t) + d;
+                        var margin = 1.5 * d;
+                        var transversePitch = 2.5 * d;
+
+                        pt = (pitch - d) * t * sigmat;
+                        ps = (n * 1.875 * Math.PI * d * d * tau) / 4;
+                        pc = n * d * t * sigmac;
+                        ita = Math.min(pt, Math.min(ps, pc)) / (pitch * t * sigmat);
+
+                        output += "Thickness of wider(inside) cover plate : " + thicknessofwidercoverplate + " mm\n";
+                        output += "Thickness of narrower(outside) cover plate : " + thicknessofnarrowercoverplate + " mm\n";
+                    }
+
+                
+
+                  
+                }
+                // Handle "lap" case...
+                else {
+                    // Handle "lap" case...
+                    var t, d, n, tau, sigmac, sigmat, pitch, pt, ps, pc, ita;
+                    var output = "";
+                    t = parseFloat(prompt("Enter the value of plate thickness (in mm):"));
+                        n = parseFloat(prompt("types of riveted(single,double,triple,other) :"));
+                        tau = parseFloat(prompt("Enter the allowable shear stress (in MPa):"));
+                        sigmac = parseFloat(prompt("Enter the allowable crushing stress (in MPa):"));
+                        sigmat = parseFloat(prompt("Enter the allowable tensile stress (in MPa):"));
+
+
+
+                        if (t >= 8) {
+                            d = 6 * Math.sqrt(t);
+                        } else {
+                            d = (4 * t * sigmac) / (1.875 * Math.PI * tau);
+                        }
+
+                        pitch = Math.min((1.875 * Math.PI * d * d * tau) / 4, sigmac * d * t) * n / (sigmat * t) + d;
+                        var margin = 1.5 * d;
+                        var transversePitch = 2.5 * d;
+
+                        pt = (pitch - d) * t * sigmat;
+                        ps = (n * 1.875 * Math.PI * d * d * tau) / 4;
+                        pc = n * d * t * sigmac;
+                        ita = Math.min(pt, Math.min(ps, pc)) / (pitch * t * sigmat);
+                    
+                }
+                output += "Value of rivet diameter: " + d + " mm\n";
+                    output += "Value of pitch: " + pitch + " mm\n";
+                    output += "Value of margin: " + margin + " mm\n";
+                    output += "Value of transverse pitch: " + transversePitch + " mm\n";
+                    output += "State the mode of failure min(pt, ps, pc): " + Math.min(pt, Math.min(ps, pc)) + " N\n";
+                    output += "Efficiency of the joint: " + ita;
+                document.getElementById("output").innerText = output;
+            }
+            // Handle cases when layout is not "chain"...
+            else {
+              var type = prompt("Types of joint (lap or butt):");
+
+if (type === "butt") {
+    var cover = prompt("types of cover plate(single or double or unequal width):");
+    var t, d, n, tau, sigmac, sigmat, pitch, pt, ps, pc, ita;
+    var output = "";
+
+    if (cover === "single") {
+        t = parseFloat(prompt("Enter the value of plate thickness (in mm):"));
+        n = parseFloat(prompt("types of riveted(single,double,triple,other) :"));
+        tau = parseFloat(prompt("Enter the allowable shear stress (in MPa):"));
+        sigmac = parseFloat(prompt("Enter the allowable crushing stress (in MPa):"));
+        sigmat = parseFloat(prompt("Enter the allowable tensile stress (in MPa):"));
+
+        var singleCoverPlateThickness = 1.125 * t;
+
+        if (t >= 8) {
+            d = 6 * Math.sqrt(t);
+        } else {
+            d = (4 * t * sigmac) / (1.875 * Math.PI * tau);
+        }
+
+        pitch = Math.min((1.875 * Math.PI * d * d * tau) / 4, sigmac * d * t) * n / (sigmat * t) + d;
+        var margin = 1.5 * d;
+        var transversePitch = 2.5 * d;
+        var diagonalpitch = Math.sqrt((pitch*pitch)/(4) +(2.5*2.5*d*d));
+
+        pt = (pitch - d) * t * sigmat;
+        ps = (n * 1.875 * Math.PI * d * d * tau) / 4;
+        pc = n * d * t * sigmac;
+        ita = Math.min(pt, Math.min(ps, pc)) / (pitch * t * sigmat);
+
+        output = "Thickness of single cover plate: " + singleCoverPlateThickness + " mm\n";
+    }
+    else if (cover === "double") {
+        t = parseFloat(prompt("Enter the value of plate thickness (in mm):"));
+        n = parseFloat(prompt("types of riveted(single,double,triple,other) :"));
+        tau = parseFloat(prompt("Enter the allowable shear stress (in MPa):"));
+        sigmac = parseFloat(prompt("Enter the allowable crushing stress (in MPa):"));
+        sigmat = parseFloat(prompt("Enter the allowable tensile stress (in MPa):"));
+
+        var doubleCoverPlateThickness = 0.625 * t;
+
+        if (t >= 8) {
+            d = 6 * Math.sqrt(t);
+        } else {
+            d = (4 * t * sigmac) / (1.875 * Math.PI * tau);
+        }
+
+        pitch = Math.min((1.875 * Math.PI * d * d * tau) / 4, sigmac * d * t) * n / (sigmat * t) + d;
+        var margin = 1.5 * d;
+        var transversePitch = 2.5 * d;
+        var diagonalpitch = Math.sqrt((pitch*pitch)/(4) +(2.5*2.5*d*d));
+
+
+        pt = (pitch - d) * t * sigmat;
+        ps = (n * 1.875 * Math.PI * d * d * tau) / 4;
+        pc = n * d * t * sigmac;
+        ita = Math.min(pt, Math.min(ps, pc)) / (pitch * t * sigmat);
+
+        output = "Thickness of double cover plate: " + doubleCoverPlateThickness + " mm\n";
+    }
+    // Handle other cases...
+    else {
+      t = parseFloat(prompt("Enter the value of plate thickness (in mm):"));
+        n = parseFloat(prompt("types of riveted(single,double,triple,other) :"));
+        tau = parseFloat(prompt("Enter the allowable shear stress (in MPa):"));
+        sigmac = parseFloat(prompt("Enter the allowable crushing stress (in MPa):"));
+        sigmat = parseFloat(prompt("Enter the allowable tensile stress (in MPa):"));
+
+        var thicknessofwidercoverplate = 0.75 * t;
+        var thicknessofnarrowercoverplate = 0.625 * t;
+
+
+        if (t >= 8) {
+            d = 6 * Math.sqrt(t);
+        } else {
+            d = (4 * t * sigmac) / (1.875 * Math.PI * tau);
+        }
+
+        pitch = Math.min((1.875 * Math.PI * d * d * tau) / 4, sigmac * d * t) * n / (sigmat * t) + d;
+        var margin = 1.5 * d;
+        var transversePitch = 2.5 * d;
+        var diagonalpitch = Math.sqrt((pitch*pitch)/(4) +(2.5*2.5*d*d));
+
+        
+
+        pt = (pitch - d) * t * sigmat;
+        ps = (n * 1.875 * Math.PI * d * d * tau) / 4;
+        pc = n * d * t * sigmac;
+        ita = Math.min(pt, Math.min(ps, pc)) / (pitch * t * sigmat);
+
+        output += "Thickness of wider(inside) cover plate : " + thicknessofwidercoverplate + " mm\n";
+        output += "Thickness of narrower(outside) cover plate : " + thicknessofnarrowercoverplate + " mm\n";
+    }
+
+
+
+    
+}
+// Handle "lap" case...
+else {
+    // Handle "lap" case...
+    var t, d, n, tau, sigmac, sigmat, pitch, pt, ps, pc, ita;
+                    var output = "";
+    t = parseFloat(prompt("Enter the value of plate thickness (in mm):"));
+        n = parseFloat(prompt("types of riveted(single,double,triple,other) :"));
+        tau = parseFloat(prompt("Enter the allowable shear stress (in MPa):"));
+        sigmac = parseFloat(prompt("Enter the allowable crushing stress (in MPa):"));
+        sigmat = parseFloat(prompt("Enter the allowable tensile stress (in MPa):"));
+        
+
+
+
+        if (t >= 8) {
+            d = 6 * Math.sqrt(t);
+        } else {
+            d = (4 * t * sigmac) / (1.875 * Math.PI * tau);
+        }
+
+        pitch = Math.min((1.875 * Math.PI * d * d * tau) / 4, sigmac * d * t) * n / (sigmat * t) + d;
+        var margin = 1.5 * d;
+        var transversePitch = 2.5 * d;
+        var diagonalpitch = Math.sqrt((pitch*pitch)/(4) +(2.5*2.5*d*d));
+
+        pt = (pitch - d) * t * sigmat;
+        ps = (n * 1.875 * Math.PI * d * d * tau) / 4;
+        pc = n * d * t * sigmac;
+        ita = Math.min(pt, Math.min(ps, pc)) / (pitch * t * sigmat);
+    
+}
+
+output += "Value of rivet diameter: " + d + " mm\n";
+    output += "Value of pitch: " + pitch + " mm\n";
+    output += "Value of margin: " + margin + " mm\n";
+    output += "Value of transverse pitch: " + transversePitch + " mm\n";
+    output += "Value of diagonal pitch: " + diagonalpitch + " mm\n";
+    output += "State the mode of failure min(pt, ps, pc): " + Math.min(pt, Math.min(ps, pc)) + " N\n";
+    output += "Efficiency of the joint: " + ita;
+    document.getElementById("output").innerText = output;
+    
+
+}
+
+
+            }
+        
+
+        calculateRiveting();
+    </script>
+    <p>
+      Submitted by :
+      21bme073,
+      21bme074,
+      21bme075,
+      21bme076,
+      21bme077,
+      21bme078,
+      21bme079,
+      21bme080,
+      21bme081,
+      21bme082,
+    </p>
+</body>
+</html>
